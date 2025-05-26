@@ -78,16 +78,32 @@ if (!("BLOB_READ_WRITE_TOKEN" in process.env)) {
   console.error('`BLOB_READ_WRITE_TOKEN` not set in env. exiting.')
   process.exit(1)  // skicq: JS-0263
 }
+function printHelp() {
+  console.log(`
+Usage: node sync.js <direction>
 
-switch (process.argv[2]) {
-  case 'up':
-    await syncFilesUp()
-    console.info('syncing up successful.')
-    break
-  case 'down':
-    await syncFilesDown()
-    console.info('syncing down successful.')
-    break
-  default:
-    console.error('must provide a valid sync direction. exiting.')
+direction:
+  up     - Upload local files to Vercel Blob storage
+  down   - Download files from Vercel Blob storage to a local directory
+`)
 }
+
+async function main() {
+  if (!process.argv[2] || !['up', 'down'].includes(process.argv[2])) {
+    printHelp()
+    process.exit(1)
+  }
+
+  switch (process.argv[2]) {
+    case 'up':
+      await syncFilesUp()
+      console.info('syncing up successful.')
+      break
+    case 'down':
+      await syncFilesDown()
+      console.info('syncing down successful.')
+      break
+  }
+}
+
+main()
